@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
@@ -37,11 +38,9 @@ export class MailService {
       const loginUrl = `${this.configService.get('FRONTEND_URL')}/login`;
 
       const emailHtml = await render(
-        WelcomeEmail({
-          userName,
-          loginUrl,
-        }),
+        <WelcomeEmail userName={userName} loginUrl={loginUrl} />,
       );
+      
 
       await this.transporter.sendMail({
         from: this.getFromAddress(),
@@ -65,12 +64,10 @@ export class MailService {
     try {
       const resetLink = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${resetToken}`;
 
-      const emailHtml = await render(
-        ResetPasswordEmail({
-          userName,
-          resetLink,
-        }),
+      const emailHtml = await  render(
+        <ResetPasswordEmail userName={userName} resetLink={resetLink} />,
       );
+      
 
       await this.transporter.sendMail({
         from: this.getFromAddress(),
@@ -93,12 +90,13 @@ export class MailService {
     try {
       const loginUrl = `${this.configService.get('FRONTEND_URL')}/login`;
 
-      const emailHtml = await render(
-        PasswordResetConfirmationEmail({
-          userName,
-          loginUrl,
-        }),
+      const emailHtml = await  render(
+        <PasswordResetConfirmationEmail
+          userName={userName}
+          loginUrl={loginUrl}
+        />,
       );
+      
 
       await this.transporter.sendMail({
         from: this.getFromAddress(),

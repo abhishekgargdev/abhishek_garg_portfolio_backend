@@ -15,7 +15,6 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomBytes } from 'crypto';
 import {
-  QUEUE_NAMES,
   MAIL_JOBS,
   DEFAULT_JOB_OPTIONS,
 } from '../queue';
@@ -29,7 +28,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {
-    this.mailQueue = this.configService.get('MAIL_QUEUE');
+    this.mailQueue = this.configService.get<Queue>('MAIL_QUEUE')!;
   }
 
   async login(loginDto: LoginDto) {
