@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
@@ -15,15 +14,23 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { randomBytes } from 'crypto';
+import {
+  QUEUE_NAMES,
+  MAIL_JOBS,
+  DEFAULT_JOB_OPTIONS,
+} from '../queue';
 
 @Injectable()
 export class AuthService {
+  private mailQueue: Queue;
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    @InjectQueue('mail') private mailQueue: Queue,
-  ) {}
+  ) {
+    this.mailQueue = this.configService.get('MAIL_QUEUE');
+  }
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -86,12 +93,16 @@ export class AuthService {
       },
     });
 
-    // Add email to queue
-    await this.mailQueue.add('send-password-reset', {
-      email: user.email,
-      userName: `${user.firstName} ${user.lastName}`,
-      resetToken,
-    });
+    // Add email to queue with the new job name
+    await this.mailQueue.add(
+      MAIL_JOBS.SEND_PASSWORD_RESET,
+      {
+        email: user.email,
+        userName: `${user.firstName} ${user.lastName}`,
+        resetToken,
+      },
+      DEFAULT_JOB_OPTIONS,
+    );
 
     return { message: 'If the email exists, a reset link has been sent' };
   }
@@ -135,6 +146,16 @@ export class AuthService {
         refreshToken: null,
       },
     });
+
+    // Send password reset confirmation email
+    await this.mailQueue.add(
+      MAIL_JOBS.SEND_PASSWORD_RESET_CONFIRMATION,
+      {
+        email: validUser.email,
+        userName: `${validUser.firstName} ${validUser.lastName}`,
+      },
+      DEFAULT_JOB_OPTIONS,
+    );
 
     return { message: 'Password reset successful' };
   }
@@ -198,6 +219,28 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  // Method to send welcome email when user registers
+  async sendWelcomeEmail(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.mailQueue.add(
+      MAIL_JOBS.SEND_WELCOME_EMAIL,
+      {
+        email: user.email,
+        userName: `${user.firstName} ${user.lastName}`,
+      },
+      DEFAULT_JOB_OPTIONS,
+    );
+
+    return { message: 'Welcome email queued successfully' };
   }
 
   private async generateTokens(userId: string, email: string) {

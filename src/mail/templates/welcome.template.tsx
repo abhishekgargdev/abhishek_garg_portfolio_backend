@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { EmailLayout } from './components';
 
-interface ResetPasswordEmailProps {
+interface WelcomeEmailProps {
   userName: string;
-  resetLink: string;
+  loginUrl: string;
 }
 
-export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
+export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({
   userName,
-  resetLink,
+  loginUrl,
 }) => {
   return (
-    <EmailLayout title="Password Reset Request">
+    <EmailLayout title="Welcome to Our Platform">
       <table
         width="100%"
         cellPadding="0"
@@ -35,26 +35,77 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
             </td>
           </tr>
 
-          {/* Message */}
+          {/* Welcome Message */}
           <tr>
             <td
               style={{
                 fontSize: '16px',
                 lineHeight: '1.5',
                 color: '#484848',
-                paddingBottom: '20px',
+                paddingBottom: '16px',
                 fontFamily:
                   '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
               }}
             >
-              We received a request to reset your password. Click the button
-              below to create a new password:
+              Welcome to Abhishek Garg's Portfolio Platform! We're thrilled to
+              have you on board. Your account has been successfully created.
+            </td>
+          </tr>
+
+          {/* Features List */}
+          <tr>
+            <td style={{ paddingBottom: '16px' }}>
+              <table
+                width="100%"
+                cellPadding="0"
+                cellSpacing="0"
+                style={{ borderCollapse: 'collapse' }}
+              >
+                <tbody>
+                  <tr>
+                    <td
+                      style={{
+                        fontSize: '16px',
+                        lineHeight: '1.5',
+                        color: '#484848',
+                        paddingBottom: '12px',
+                        fontFamily:
+                          '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+                      }}
+                    >
+                      Here's what you can do with your account:
+                    </td>
+                  </tr>
+                  {[
+                    'View and explore portfolio projects',
+                    'Access exclusive content and resources',
+                    'Connect and collaborate on projects',
+                    'Stay updated with the latest updates',
+                  ].map((feature, index) => (
+                    <tr key={index}>
+                      <td
+                        style={{
+                          fontSize: '14px',
+                          lineHeight: '1.5',
+                          color: '#666666',
+                          paddingLeft: '16px',
+                          paddingBottom: '8px',
+                          fontFamily:
+                            '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+                        }}
+                      >
+                        • {feature}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </td>
           </tr>
 
           {/* CTA Button */}
           <tr>
-            <td style={{ paddingBottom: '24px' }}>
+            <td style={{ paddingBottom: '24px', paddingTop: '8px' }}>
               <table
                 cellPadding="0"
                 cellSpacing="0"
@@ -70,7 +121,7 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
                       }}
                     >
                       <a
-                        href={resetLink}
+                        href={loginUrl}
                         style={{
                           display: 'inline-block',
                           padding: '14px 32px',
@@ -82,7 +133,7 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
                             '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
                         }}
                       >
-                        Reset Password
+                        Get Started
                       </a>
                     </td>
                   </tr>
@@ -91,77 +142,19 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
             </td>
           </tr>
 
-          {/* Alternative Link */}
+          {/* Help Text */}
           <tr>
             <td
               style={{
                 fontSize: '14px',
                 lineHeight: '1.5',
-                color: '#484848',
-                paddingBottom: '8px',
+                color: '#8898aa',
                 fontFamily:
                   '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
               }}
             >
-              Or copy and paste this link into your browser:
-            </td>
-          </tr>
-          <tr>
-            <td
-              style={{
-                fontSize: '14px',
-                lineHeight: '1.5',
-                paddingBottom: '20px',
-                wordBreak: 'break-all' as const,
-              }}
-            >
-              <a
-                href={resetLink}
-                style={{
-                  color: '#5469d4',
-                  textDecoration: 'underline',
-                  fontFamily:
-                    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-                }}
-              >
-                {resetLink}
-              </a>
-            </td>
-          </tr>
-
-          {/* Warning Notice */}
-          <tr>
-            <td style={{ paddingBottom: '16px' }}>
-              <table
-                width="100%"
-                cellPadding="0"
-                cellSpacing="0"
-                style={{
-                  borderCollapse: 'collapse',
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: '5px',
-                  borderLeft: '4px solid #5469d4',
-                }}
-              >
-                <tbody>
-                  <tr>
-                    <td
-                      style={{
-                        padding: '16px',
-                        fontSize: '14px',
-                        lineHeight: '1.5',
-                        color: '#666666',
-                        fontFamily:
-                          '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-                      }}
-                    >
-                      <strong>Note:</strong> This link will expire in 1 hour. If
-                      you didn't request a password reset, please ignore this
-                      email or contact support if you have concerns.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              If you have any questions or need assistance, feel free to reach
+              out. We're here to help!
             </td>
           </tr>
         </tbody>
@@ -170,4 +163,4 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({
   );
 };
 
-export default ResetPasswordEmail;
+export default WelcomeEmail;
