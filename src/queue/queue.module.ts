@@ -9,11 +9,17 @@ import { QUEUE_NAMES } from './constants/queue.constants';
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        redis: {
-          host: configService.get('REDIS_HOST', 'localhost'),
-          port: configService.get('REDIS_PORT', 6379),
-          password: configService.get('REDIS_PASSWORD'),
-        },
+        // Prefer a single REDIS_URL (useful for Upstash TLS Redis URL). Fallback to host/port/password.
+        redis: (() => {
+          const redisUrl = configService.get<string>('REDIS_URL');
+          if (redisUrl) return { url: redisUrl } as any;
+
+          const host = configService.get('REDIS_HOST', 'localhost');
+          const port = Number(configService.get('REDIS_PORT', 6379));
+          const password = configService.get('REDIS_PASSWORD');
+
+          return { host, port, password } as any;
+        })(),
         defaultJobOptions: {
           attempts: 3,
           backoff: {
