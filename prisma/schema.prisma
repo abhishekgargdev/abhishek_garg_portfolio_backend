@@ -7,10 +7,12 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["abhishek_portfolio"]
 }
 
 model User {
@@ -27,6 +29,7 @@ model User {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("users")
+  @@schema("abhishek_portfolio")
 }
 
 model RedisConnection {
@@ -38,4 +41,5 @@ model RedisConnection {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@map("redis_connections")
+  @@schema("abhishek_portfolio")
 }

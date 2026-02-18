@@ -24,6 +24,7 @@ const configuration: ConfigFactory = () => {
     return {
         NODE_ENV: nodeEnv,
         DATABASE_URL: getEnvValue(prefix, 'DATABASE_URL', ''),
+        DIRECT_URL: getEnvValue(prefix, 'DIRECT_URL', ''),
         JWT_SECRET: getEnvValue(prefix, 'JWT_SECRET', ''),
         JWT_REFRESH_SECRET: getEnvValue(prefix, 'JWT_REFRESH_SECRET', ''),
         JWT_EXPIRATION: getEnvValue(prefix, 'JWT_EXPIRATION', '15m'),

@@ -21,7 +21,7 @@ function getEnvValue(prefix: string, key: string, fallback?: string) {
 
 const nodeEnv = (process.env.NODE_ENV || 'local').toLowerCase();
 const prefix = getPrefix(nodeEnv);
-const databaseUrl = getEnvValue(prefix, 'DATABASE_URL', '');
+const databaseUrl = getEnvValue(prefix, 'DIRECT_URL', '');
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
