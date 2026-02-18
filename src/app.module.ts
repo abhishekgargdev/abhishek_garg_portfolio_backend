@@ -10,6 +10,7 @@ import { MailModule } from './mail/mail.module';
 import { QueueModule } from './queue/queue.module';
 import { HealthModule } from './health/health.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthModule,
     MailModule,
     HealthModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -43,6 +43,7 @@ const configuration: ConfigFactory = () => {
         EMAIL_FROM: getEnvValue(prefix, 'EMAIL_FROM', ''),
         UPSTASH_REDIS_REST_URL: getEnvValue(prefix, 'UPSTASH_REDIS_REST_URL', ''),
         UPSTASH_REDIS_REST_TOKEN: getEnvValue(prefix, 'UPSTASH_REDIS_REST_TOKEN', ''),
+        CLOUDINARY_URL: getEnvValue(prefix, 'CLOUDINARY_URL', ''),
         FRONTEND_URL: getEnvValue(prefix, 'FRONTEND_URL', ''),
         PORT: Number(getEnvValue(prefix, 'PORT', '3000')),
         SEED_USER_EMAIL: getEnvValue(prefix, 'SEED_USER_EMAIL', ''),
