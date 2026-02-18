@@ -8,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiHeader } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -18,12 +19,29 @@ import { ResponseUtil } from '../common/utils/response.util';
 import { StatusCodes } from '../common/constants/status-codes.constant';
 import { ResponseMessages } from '../common/constants/messages.constant';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'User login' })
+  @ApiBody({
+    type: LoginDto,
+    description: 'User login credentials',
+    examples: {
+      example1: {
+        summary: 'Valid login request',
+        value: {
+          email: 'user@example.com',
+          password: 'SecurePass@123',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Login successful, returns access and refresh tokens' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async login(@Body() loginDto: LoginDto) {
     try {
       const result = await this.authService.login(loginDto);
@@ -42,6 +60,20 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiBody({
+    type: ForgotPasswordDto,
+    description: 'Email address to send password reset link',
+    examples: {
+      example1: {
+        summary: 'Valid forgot password request',
+        value: {
+          email: 'user@example.com',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Password reset email sent if user exists' })
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     try {
       await this.authService.forgotPassword(forgotPasswordDto);
@@ -60,6 +92,22 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset password with token' })
+  @ApiBody({
+    type: ResetPasswordDto,
+    description: 'Reset token and new password',
+    examples: {
+      example1: {
+        summary: 'Valid reset password request',
+        value: {
+          token: 'abc123def456xyz789',
+          newPassword: 'NewSecurePass@456',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Password reset successful' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired reset token' })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
       const result = await this.authService.resetPassword(resetPasswordDto);
@@ -78,6 +126,21 @@ export class AuthController {
 
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiBody({
+    type: RefreshTokenDto,
+    description: 'Refresh token to get new access token',
+    examples: {
+      example1: {
+        summary: 'Valid refresh token request',
+        value: {
+          refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzcyZGZhYzBhMDZjNDAwMDAwMDAwMDEiLCJpYXQiOjE3MDU5MTI5MzgsImV4cCI6MTcwNjUxNzczOH0.abc123def456',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'New access and refresh tokens returned' })
+  @ApiResponse({ status: 401, description: 'Invalid refresh token' })
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     try {
       const result = await this.authService.refreshToken(refreshTokenDto);
@@ -96,6 +159,16 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get current user details' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token (access token)',
+    required: true,
+    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
+  @ApiResponse({ status: 200, description: 'User details retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getUserDetails(@Request() req) {
     try {
       const result = await this.authService.getUserDetails(req?.user?.userId);

@@ -1,15 +1,48 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { HealthService, HealthStatus } from './health.service';
-import { ApiResponse } from 'src/common/interfaces/api-response.interface';
+import { ApiResponse as ApiResponseInterface } from 'src/common/interfaces/api-response.interface';
 import { StatusCodes } from 'src/common/constants/status-codes.constant';
 import { ResponseUtil } from 'src/common/utils/response.util';
 
+@ApiTags('Health')
 @Controller('health')
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 
   @Get()
-  async checkHealth(): Promise<ApiResponse<HealthStatus>> {
+  @ApiOperation({ summary: 'Check overall system health' })
+  @ApiResponse({
+    status: 200,
+    description: 'All systems are healthy',
+    schema: {
+      example: {
+        success: true,
+        data: {
+          status: 'healthy',
+          checks: {
+            database: { status: 'up', message: 'PostgreSQL connected' },
+            redis: { status: 'up', message: 'Redis connected via Upstash' },
+            server: { status: 'up', message: 'Server running' },
+            memory: { status: 'up', usage: '256MB / 512MB' },
+          },
+        },
+        message: 'All systems operational',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'One or more systems are down',
+    schema: {
+      example: {
+        success: false,
+        data: null,
+        message: 'One or more systems are experiencing issues',
+      },
+    },
+  })
+  async checkHealth(): Promise<ApiResponseInterface<HealthStatus>> {
     const healthStatus = await this.healthService.checkHealth();
 
     const statusCode =
@@ -27,6 +60,27 @@ export class HealthController {
   }
 
   @Get('last')
+  @ApiOperation({ summary: 'Get last health check results' })
+  @ApiResponse({
+    status: 200,
+    description: 'Last health check status retrieved',
+    schema: {
+      example: {
+        success: true,
+        data: {
+          timestamp: '2025-02-04T10:30:45.123Z',
+          status: 'healthy',
+          checks: {
+            database: { status: 'up', message: 'PostgreSQL connected', responseTime: '12ms' },
+            redis: { status: 'up', message: 'Redis connected via Upstash', responseTime: '45ms' },
+            server: { status: 'up', message: 'Server running', uptime: '2h 30m' },
+            memory: { status: 'up', usage: '256MB / 512MB', percentage: 50 },
+          },
+        },
+        message: 'Last health check status retrieved',
+      },
+    },
+  })
   getLastHealthStatus() {
     const lastStatus = this.healthService.getLastHealthStatus();
 
@@ -46,8 +100,31 @@ export class HealthController {
   }
 
   @Get('database')
+  @ApiOperation({ summary: 'Check database health' })
+  @ApiResponse({
+    status: 200,
+    description: 'Database status checked',
+    schema: {
+      example: {
+        success: true,
+        data: { status: 'up', message: 'PostgreSQL connected', responseTime: '12ms' },
+        message: 'Database status checked',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Database is down',
+    schema: {
+      example: {
+        success: false,
+        data: { status: 'down', message: 'Connection timeout' },
+        message: 'Database status checked',
+      },
+    },
+  })
   async checkDatabase(): Promise<
-    ApiResponse<HealthStatus['checks']['database']>
+    ApiResponseInterface<HealthStatus['checks']['database']>
   > {
     const healthStatus = await this.healthService.checkHealth();
 
@@ -64,8 +141,20 @@ export class HealthController {
   }
 
   @Get('server')
+  @ApiOperation({ summary: 'Check server health' })
+  @ApiResponse({
+    status: 200,
+    description: 'Server status checked',
+    schema: {
+      example: {
+        success: true,
+        data: { status: 'up', message: 'Server running', uptime: '2h 30m', version: '1.0.0' },
+        message: 'Server status checked',
+      },
+    },
+  })
   async checkServer(): Promise<
-    ApiResponse<HealthStatus['checks']['server']>
+    ApiResponseInterface<HealthStatus['checks']['server']>
   > {
     const healthStatus = await this.healthService.checkHealth();
 
@@ -77,8 +166,31 @@ export class HealthController {
   }
 
   @Get('memory')
+  @ApiOperation({ summary: 'Check memory usage' })
+  @ApiResponse({
+    status: 200,
+    description: 'Memory status checked',
+    schema: {
+      example: {
+        success: true,
+        data: { status: 'up', message: 'Memory usage normal', usage: '256MB / 512MB', percentage: 50 },
+        message: 'Memory status checked',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Memory usage critical',
+    schema: {
+      example: {
+        success: false,
+        data: { status: 'down', message: 'Memory usage critical', usage: '490MB / 512MB', percentage: 95 },
+        message: 'Memory status checked',
+      },
+    },
+  })
   async checkMemory(): Promise<
-    ApiResponse<HealthStatus['checks']['memory']>
+    ApiResponseInterface<HealthStatus['checks']['memory']>
   > {
     const healthStatus = await this.healthService.checkHealth();
 
