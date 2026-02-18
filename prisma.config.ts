@@ -3,6 +3,26 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+function getPrefix(env: string | undefined) {
+  const map: Record<string, string> = {
+    local: 'LOCAL',
+    dev: 'DEV',
+    prod: 'PROD',
+  };
+  return map[(env || 'local').toLowerCase()] || 'LOCAL';
+}
+
+function getEnvValue(prefix: string, key: string, fallback?: string) {
+  const prefixed = process.env[`${prefix}_${key}`];
+  if (prefixed !== undefined) return prefixed;
+  if (process.env[key] !== undefined) return process.env[key] as string;
+  return fallback;
+}
+
+const nodeEnv = (process.env.NODE_ENV || 'local').toLowerCase();
+const prefix = getPrefix(nodeEnv);
+const databaseUrl = getEnvValue(prefix, 'DATABASE_URL', '');
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
@@ -10,6 +30,6 @@ export default defineConfig({
     seed: 'tsx prisma/seed.ts',
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: databaseUrl,
   },
 });
