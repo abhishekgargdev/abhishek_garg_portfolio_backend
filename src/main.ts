@@ -30,9 +30,11 @@ async function bootstrap() {
 
   // Bull dashboard removed - queue uses REDIS_URL and is checked by RedisService
 
-  const port = process.env.PORT || 3000;
+  const port = configService.get('PORT') || 3000;
   await app.listen(port);
 
   console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`swagger doc is running on: http://localhost:${port}/docs`);
+
 }
 bootstrap();
