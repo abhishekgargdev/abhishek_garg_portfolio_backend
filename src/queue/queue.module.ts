@@ -17,8 +17,10 @@ import { QUEUE_NAMES } from './constants/queue.constants';
           const host = configService.get('REDIS_HOST', 'localhost');
           const port = Number(configService.get('REDIS_PORT', 6379));
           const password = configService.get('REDIS_PASSWORD');
+          const username = configService.get<string>('REDIS_USERNAME');
+          const tls = configService.get<boolean>('REDIS_TLS', false);
 
-          return { host, port, password } as any;
+          return { host, port, password, username, tls } as any;
         })(),
         defaultJobOptions: {
           attempts: 3,
