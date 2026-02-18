@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
+import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
@@ -21,15 +22,12 @@ import {
 
 @Injectable()
 export class AuthService {
-  private mailQueue: Queue;
-
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {
-    this.mailQueue = this.configService.get<Queue>('MAIL_QUEUE')!;
-  }
+    @InjectQueue('mail-queue') private readonly mailQueue: Queue,
+  ) {}
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -111,6 +109,7 @@ export class AuthService {
 
     const users = await this.prisma.user.findMany({
       where: {
+        resetToken: { not: null },
         resetTokenExpiry: {
           gte: new Date(),
         },
@@ -141,7 +140,6 @@ export class AuthService {
         hashPassword: hashedPassword,
         resetToken: null,
         resetTokenExpiry: null,
-        accessToken: null,
         refreshToken: null,
       },
     });
@@ -189,7 +187,6 @@ export class AuthService {
       await this.prisma.user.update({
         where: { id: user.id },
         data: {
-          accessToken: tokens.accessToken,
           refreshToken: await bcrypt.hash(tokens.refreshToken, 10),
         },
       });

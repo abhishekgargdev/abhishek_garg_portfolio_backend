@@ -15,14 +15,19 @@ export class MailService {
   private transporter: nodemailer.Transporter;
 
   constructor(private configService: ConfigService) {
+    const host = this.configService.get<string>('SMTP_HOST');
+    const port = Number(this.configService.get<number | string>('SMTP_PORT') || 587);
+    const secureRaw = this.configService.get<string | boolean>('SMTP_SECURE');
+    const secure =
+      typeof secureRaw === 'boolean' ? secureRaw : String(secureRaw).toLowerCase() === 'true';
+    const user = this.configService.get<string>('SMTP_USER');
+    const pass = this.configService.get<string>('SMTP_PASSWORD');
+
     this.transporter = nodemailer.createTransport({
-      host: this.configService.get('SMTP_HOST'),
-      port: this.configService.get('SMTP_PORT'),
-      secure: this.configService.get('SMTP_SECURE', false),
-      auth: {
-        user: this.configService.get('SMTP_USER'),
-        pass: this.configService.get('SMTP_PASSWORD'),
-      },
+      host,
+      port,
+      secure,
+      auth: user && pass ? { user, pass } : undefined,
     });
   }
 

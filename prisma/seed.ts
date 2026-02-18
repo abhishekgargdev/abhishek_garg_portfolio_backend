@@ -4,18 +4,28 @@ import dotenv from 'dotenv';
 import { PrismaClient } from 'src/generated/prisma/client';
 
 dotenv.config();
+// Support prefixed env vars the same way as the app (LOCAL_/DEV_/PROD_)
+const nodeEnv = (process.env.NODE_ENV || 'local').toLowerCase();
+const prefixMap: Record<string, string> = { local: 'LOCAL', dev: 'DEV', prod: 'PROD' };
+const prefix = prefixMap[nodeEnv] || 'LOCAL';
+
+function getEnv(key: string, fallback?: string) {
+  return process.env[`${prefix}_${key}`] ?? process.env[key] ?? fallback;
+}
+
 const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  });
-const prisma = new PrismaClient({adapter});
+  connectionString: getEnv('DATABASE_URL', process.env.DATABASE_URL)!,
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Starting seed...');
 
-  const email = process.env.SEED_USER_EMAIL ?? 'admin@example.com';
-  const password = process.env.SEED_USER_PASSWORD ?? 'Admin@123456';
-  const firstName = process.env.SEED_USER_FIRST_NAME ?? 'Admin';
-  const lastName = process.env.SEED_USER_LAST_NAME ?? 'User';
+  const email = getEnv('SEED_USER_EMAIL', 'admin@example.com') || 'admin@example.com';
+  const password = getEnv('SEED_USER_PASSWORD', 'Admin@123456') || 'Admin@123456';
+  const firstName = getEnv('SEED_USER_FIRST_NAME', 'Admin') || 'Admin';
+  const lastName = getEnv('SEED_USER_LAST_NAME', 'User') || 'User';
 
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({
