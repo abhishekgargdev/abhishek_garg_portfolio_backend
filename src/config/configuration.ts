@@ -31,6 +31,11 @@ const configuration: ConfigFactory = () => {
         REDIS_HOST: getEnvValue(prefix, 'REDIS_HOST', 'localhost'),
         REDIS_PORT: Number(getEnvValue(prefix, 'REDIS_PORT', '6379')),
         REDIS_PASSWORD: getEnvValue(prefix, 'REDIS_PASSWORD', ''),
+        REDIS_USERNAME: getEnvValue(prefix, 'REDIS_USERNAME', ''),
+        REDIS_TLS: (() => {
+            const raw = getEnvValue(prefix, 'REDIS_TLS', 'false');
+            return raw === 'true' || raw === '1';
+        })(),
         REDIS_URL: getEnvValue(prefix, 'REDIS_URL', ''),
         SMTP_HOST: getEnvValue(prefix, 'SMTP_HOST', ''),
         SMTP_PORT: Number(getEnvValue(prefix, 'SMTP_PORT', '587')),

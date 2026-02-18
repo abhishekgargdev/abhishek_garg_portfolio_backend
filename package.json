@@ -24,6 +24,7 @@
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "prisma db seed",
     "email:dev": "email dev -p 3001"
   },
