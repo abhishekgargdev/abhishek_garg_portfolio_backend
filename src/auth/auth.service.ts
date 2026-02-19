@@ -204,6 +204,9 @@ export class AuthService {
         id: true,
         firstName: true,
         lastName: true,
+        fullName: true,
+        tags: true,
+        description: true,
         email: true,
         createdAt: true,
         updatedAt: true,
@@ -215,6 +218,15 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async updateUserDetails(userId: string, data: any) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    return this.getUserDetails(userId);
   }
 
   // Method to send welcome email when user registers

@@ -19,6 +19,9 @@ model User {
   id            String    @id @default(uuid())
   firstName     String    @map("first_name")
   lastName      String    @map("last_name")
+  fullName      String?   @map("full_name")
+  tags          String[]  @default([])
+  description   String?   @db.Text
   email         String    @unique
   hashPassword  String    @map("hash_password")
   accessToken   String?   @map("access_token") @db.Text
@@ -43,3 +46,4 @@ model RedisConnection {
   @@map("redis_connections")
   @@schema("abhishek_portfolio")
 }
+

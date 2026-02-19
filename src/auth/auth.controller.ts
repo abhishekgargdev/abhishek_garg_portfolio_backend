@@ -7,6 +7,7 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiHeader } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -15,6 +16,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseUtil } from '../common/utils/response.util';
 import { StatusCodes } from '../common/constants/status-codes.constant';
 import { ResponseMessages } from '../common/constants/messages.constant';
@@ -175,6 +177,26 @@ export class AuthController {
       return ResponseUtil.success(
         result,
         ResponseMessages.USER_FOUND,
+        StatusCodes.OK,
+      );
+    } catch (error: any) {
+      return ResponseUtil.error(
+        error.message,
+        error.status || StatusCodes.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Put('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Update current user profile' })
+  async updateUserDetails(@Request() req, @Body() dto: UpdateUserDto) {
+    try {
+      const result = await this.authService.updateUserDetails(req?.user?.userId, dto);
+      return ResponseUtil.success(
+        result,
+        ResponseMessages.USER_UPDATED,
         StatusCodes.OK,
       );
     } catch (error: any) {
