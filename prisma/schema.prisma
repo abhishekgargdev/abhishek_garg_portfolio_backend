@@ -15,6 +15,14 @@ datasource db {
   schemas  = ["abhishek_portfolio"]
 }
 
+enum TimelineType {
+  ACHIEVEMENT
+  CERTIFICATE
+  EXPERIENCE
+  PROJECT
+  OTHER
+}
+
 model User {
   id            String    @id @default(uuid())
   firstName     String    @map("first_name")
@@ -34,6 +42,25 @@ model User {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("users")
+  @@schema("abhishek_portfolio")
+}
+
+model Timeline {
+  id        String       @id @default(uuid())
+  title     String
+  subTitle  String?      @map("sub_title")
+  type      TimelineType
+  startDate DateTime     @map("start_date")
+  endDate   DateTime?    @map("end_date")
+  description String?    @db.Text
+  tags      String[]     @default([])
+  skills    String[]     @default([])
+  userId    String       @map("user_id")
+  user      User         @relation(fields: [userId], references: [id])
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  @@map("timeline")
   @@schema("abhishek_portfolio")
 }
 
