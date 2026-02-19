@@ -22,4 +22,12 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  profileImageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  profileImagePublicId?: string;
 }

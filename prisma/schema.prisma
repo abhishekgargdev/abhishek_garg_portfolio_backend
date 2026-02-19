@@ -22,6 +22,8 @@ model User {
   fullName      String?   @map("full_name")
   tags          String[]  @default([])
   description   String?   @db.Text
+  profileImageUrl String? @map("profile_image_url") @db.Text
+  profileImagePublicId String? @map("profile_image_public_id")
   email         String    @unique
   hashPassword  String    @map("hash_password")
   accessToken   String?   @map("access_token") @db.Text

@@ -8,6 +8,9 @@ import {
   HttpCode,
   HttpStatus,
   Put,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiHeader } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -17,6 +20,9 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from '../upload/cloudinary.service';
+import { ApiConsumes } from '@nestjs/swagger';
 import { ResponseUtil } from '../common/utils/response.util';
 import { StatusCodes } from '../common/constants/status-codes.constant';
 import { ResponseMessages } from '../common/constants/messages.constant';
@@ -24,7 +30,10 @@ import { ResponseMessages } from '../common/constants/messages.constant';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -205,5 +214,35 @@ export class AuthController {
         error.status || StatusCodes.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  @Post('me/avatar')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload or update profile avatar' })
+  async uploadAvatar(@Request() req, @UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    const upload = await this.cloudinaryService.uploadWithCompression(
+      file,
+      { quality: 'auto', maxWidth: 1024, format: 'webp' },
+      'portfolio/profile',
+    );
+
+    const imageUrl = upload.compressedUrl || upload.secureUrl || upload.url;
+
+    const updated = await this.authService.updateUserDetails(req?.user?.userId, {
+      profileImageUrl: imageUrl,
+      profileImagePublicId: upload.publicId,
+    });
+
+    return ResponseUtil.success(
+      updated,
+      ResponseMessages.USER_UPDATED,
+      StatusCodes.OK,
+    );
   }
 }
