@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { QUEUE_NAMES } from '../queue';
+import { CloudinaryService } from 'src/upload/cloudinary.service';
 
 @Module({
   imports: [
@@ -27,9 +28,10 @@ import { QUEUE_NAMES } from '../queue';
       name: QUEUE_NAMES.MAIL,
     }),
     ConfigModule,
+    
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy,CloudinaryService],
   exports: [AuthService],
 })
 export class AuthModule {}
