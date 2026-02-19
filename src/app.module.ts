@@ -12,6 +12,7 @@ import { HealthModule } from './health/health.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { UploadModule } from './upload/upload.module';
 import { TimelineModule } from './timeline/timeline.module';
+import { SkillsModule } from './skills/skills.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TimelineModule } from './timeline/timeline.module';
     HealthModule,
     UploadModule,
     TimelineModule,
+    SkillsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
