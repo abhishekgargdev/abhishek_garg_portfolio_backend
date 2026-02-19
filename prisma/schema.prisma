@@ -50,6 +50,8 @@ model User {
   projects      Project[]
   education     Education[]
   workExperience WorkExperience[]
+  achievements  Achievement[]
+  certificates  Certificate[]
 
   @@map("users")
   @@schema("abhishek_portfolio")
@@ -161,6 +163,40 @@ model WorkExperience {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("work_experience")
+  @@schema("abhishek_portfolio")
+}
+
+model Achievement {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  user            User     @relation(fields: [userId], references: [id])
+  title           String
+  date            DateTime
+  subtitle        String?  @db.Text
+  description     String?  @db.Text
+  imageUrl        String?  @map("image_url") @db.Text
+  imagePublicId   String?  @map("image_public_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("achievements")
+  @@schema("abhishek_portfolio")
+}
+
+model Certificate {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  user            User     @relation(fields: [userId], references: [id])
+  title           String
+  date            DateTime
+  subtitle        String?  @db.Text
+  description     String?  @db.Text
+  imageUrl        String?  @map("image_url") @db.Text
+  imagePublicId   String?  @map("image_public_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("certificates")
   @@schema("abhishek_portfolio")
 }
 

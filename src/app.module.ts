@@ -16,6 +16,8 @@ import { SkillsModule } from './skills/skills.module';
 import { ProjectsModule } from './projects/projects.module';
 import { EducationModule } from './education/education.module';
 import { WorkExperienceModule } from './work-experience/work-experience.module';
+import { AchievementsModule } from './achievements/achievements.module';
+import { CertificatesModule } from './certificates/certificates.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { WorkExperienceModule } from './work-experience/work-experience.module';
     ProjectsModule,
     EducationModule,
     WorkExperienceModule,
+    AchievementsModule,
+    CertificatesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
