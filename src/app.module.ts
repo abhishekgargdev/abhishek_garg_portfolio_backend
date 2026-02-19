@@ -14,6 +14,7 @@ import { UploadModule } from './upload/upload.module';
 import { TimelineModule } from './timeline/timeline.module';
 import { SkillsModule } from './skills/skills.module';
 import { ProjectsModule } from './projects/projects.module';
+import { EducationModule } from './education/education.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ProjectsModule } from './projects/projects.module';
     TimelineModule,
     SkillsModule,
     ProjectsModule,
+    EducationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
