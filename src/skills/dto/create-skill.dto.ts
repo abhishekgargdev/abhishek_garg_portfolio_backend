@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator';
-import { SkillSection } from '@prisma/client';
+import { SkillSection } from 'src/generated/prisma/enums';
 
 export class CreateSkillDto {
   @IsString()

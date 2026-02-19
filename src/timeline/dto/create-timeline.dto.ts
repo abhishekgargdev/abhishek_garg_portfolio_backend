@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsArray, ArrayNotEmpty, IsEnum, IsISO8601 } from 'class-validator';
-import { TimelineType } from '@prisma/client';
+import { TimelineType } from 'src/generated/prisma/enums';
 
 export class CreateTimelineDto {
   @IsString()
