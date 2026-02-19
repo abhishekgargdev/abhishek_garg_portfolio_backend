@@ -21,6 +21,22 @@ export interface GenericEmailJob {
   htmlContent: string;
 }
 
+export interface SendUserQueryNotificationJob {
+  adminEmail: string;
+  userName: string;
+  userEmail: string;
+  subject: string;
+  message: string;
+  queryId: string;
+}
+
+export interface SendUserQueryConfirmationJob {
+  email: string;
+  userName: string;
+  subject: string;
+  message: string;
+}
+
 // Notification Job Interfaces
 export interface PushNotificationJob {
   userId: string;

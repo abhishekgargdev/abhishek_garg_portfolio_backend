@@ -18,6 +18,7 @@ import { EducationModule } from './education/education.module';
 import { WorkExperienceModule } from './work-experience/work-experience.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { CertificatesModule } from './certificates/certificates.module';
+import { UserQueriesModule } from './user-queries/user-queries.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CertificatesModule } from './certificates/certificates.module';
     WorkExperienceModule,
     AchievementsModule,
     CertificatesModule,
+    UserQueriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

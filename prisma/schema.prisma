@@ -200,3 +200,16 @@ model Certificate {
   @@schema("abhishek_portfolio")
 }
 
+model UserQuery {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  subject     String
+  message     String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("user_queries")
+  @@schema("abhishek_portfolio")
+}
+

@@ -7,6 +7,8 @@ import {
   ResetPasswordEmail,
   WelcomeEmail,
   PasswordResetConfirmationEmail,
+  UserQueryNotificationEmail,
+  UserQueryConfirmationEmail,
 } from './templates';
 
 @Injectable()
@@ -122,7 +124,7 @@ export class MailService {
     }
   }
 
-  async sendGenericEmail(
+async sendGenericEmail(
     email: string,
     subject: string,
     htmlContent: string,
@@ -138,6 +140,68 @@ export class MailService {
       this.logger.log(`Generic email sent successfully to ${email}`);
     } catch (error) {
       this.logger.error(`Failed to send generic email to ${email}`, error);
+      throw error;
+    }
+  }
+
+  async sendUserQueryNotificationEmail(
+    adminEmail: string,
+    userName: string,
+    userEmail: string,
+    subject: string,
+    message: string,
+    queryId: string,
+  ): Promise<void> {
+    try {
+      const emailHtml = await render(
+        <UserQueryNotificationEmail
+          userName={userName}
+          userEmail={userEmail}
+          subject={subject}
+          message={message}
+          queryId={queryId}
+        />,
+      );
+
+      await this.transporter.sendMail({
+        from: this.getFromAddress(),
+        to: adminEmail,
+        subject: `New Query: ${subject}`,
+        html: emailHtml,
+      });
+
+      this.logger.log(`User query notification email sent successfully to ${adminEmail}`);
+    } catch (error) {
+      this.logger.error(`Failed to send user query notification email to ${adminEmail}`, error);
+      throw error;
+    }
+  }
+
+  async sendUserQueryConfirmationEmail(
+    email: string,
+    userName: string,
+    subject: string,
+    message: string,
+  ): Promise<void> {
+    try {
+      const emailHtml = await render(
+        <UserQueryConfirmationEmail
+          userName={userName}
+          subject={subject}
+          message={message}
+        />,
+      );
+
+      await this.transporter.sendMail({
+        from: this.getFromAddress(),
+        to: email,
+        subject: 'We Received Your Query',
+        html: emailHtml,
+      });
+
+      this.logger.log(`User query confirmation email sent successfully to ${email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send user query confirmation email to ${email}`, error);
       throw error;
     }
   }

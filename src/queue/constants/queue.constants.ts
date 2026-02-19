@@ -13,6 +13,8 @@ export const MAIL_JOBS = {
   SEND_PASSWORD_RESET: 'send-password-reset',
   SEND_PASSWORD_RESET_CONFIRMATION: 'send-password-reset-confirmation',
   SEND_GENERIC_EMAIL: 'send-generic-email',
+  SEND_USER_QUERY_NOTIFICATION: 'send-user-query-notification',
+  SEND_USER_QUERY_CONFIRMATION: 'send-user-query-confirmation',
 } as const;
 
 export const NOTIFICATION_JOBS = {

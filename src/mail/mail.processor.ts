@@ -9,6 +9,8 @@ import {
   type PasswordResetEmailJob,
   type PasswordResetConfirmationJob,
   type GenericEmailJob,
+  type SendUserQueryNotificationJob,
+  type SendUserQueryConfirmationJob,
 } from '../queue';
 
 @Processor(QUEUE_NAMES.MAIL)
@@ -57,10 +59,36 @@ export class MailProcessor {
     await this.mailService.sendPasswordResetConfirmationEmail(email, userName);
   }
 
-  @Process(MAIL_JOBS.SEND_GENERIC_EMAIL)
+@Process(MAIL_JOBS.SEND_GENERIC_EMAIL)
   async handleGenericEmail(job: Job<GenericEmailJob>) {
     this.logger.log(`Processing generic email job for ${job.data.email}`);
     const { email, subject, htmlContent } = job.data;
     await this.mailService.sendGenericEmail(email, subject, htmlContent);
+  }
+
+  @Process(MAIL_JOBS.SEND_USER_QUERY_NOTIFICATION)
+  async handleUserQueryNotification(job: Job<SendUserQueryNotificationJob>) {
+    this.logger.log(`Processing user query notification job for admin`);
+    const { adminEmail, userName, userEmail, subject, message, queryId } = job.data;
+    await this.mailService.sendUserQueryNotificationEmail(
+      adminEmail,
+      userName,
+      userEmail,
+      subject,
+      message,
+      queryId,
+    );
+  }
+
+  @Process(MAIL_JOBS.SEND_USER_QUERY_CONFIRMATION)
+  async handleUserQueryConfirmation(job: Job<SendUserQueryConfirmationJob>) {
+    this.logger.log(`Processing user query confirmation job for ${job.data.email}`);
+    const { email, userName, subject, message } = job.data;
+    await this.mailService.sendUserQueryConfirmationEmail(
+      email,
+      userName,
+      subject,
+      message,
+    );
   }
 }
