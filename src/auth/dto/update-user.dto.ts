@@ -30,4 +30,13 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   profileImagePublicId?: string;
+
+  @IsOptional()
+  @IsString()
+  beyondCode?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  beyondCodeTags?: string[];
 }

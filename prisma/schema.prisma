@@ -32,6 +32,8 @@ model User {
   description   String?   @db.Text
   profileImageUrl String? @map("profile_image_url") @db.Text
   profileImagePublicId String? @map("profile_image_public_id")
+  beyondCode          String?   @map("beyond_code") @db.Text
+  beyondCodeTags      String[]  @map("beyond_code_tags") @default([])
   email         String    @unique
   hashPassword  String    @map("hash_password")
   accessToken   String?   @map("access_token") @db.Text
@@ -44,6 +46,7 @@ model User {
   @@map("users")
   @@schema("abhishek_portfolio")
 }
+
 
 model Timeline {
   id        String       @id @default(uuid())

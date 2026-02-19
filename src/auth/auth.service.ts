@@ -209,6 +209,8 @@ export class AuthService {
         description: true,
         profileImageUrl: true,
         profileImagePublicId: true,
+        beyondCode: true,
+        beyondCodeTags: true,
         email: true,
         createdAt: true,
         updatedAt: true,
