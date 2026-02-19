@@ -15,6 +15,7 @@ import { TimelineModule } from './timeline/timeline.module';
 import { SkillsModule } from './skills/skills.module';
 import { ProjectsModule } from './projects/projects.module';
 import { EducationModule } from './education/education.module';
+import { WorkExperienceModule } from './work-experience/work-experience.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { EducationModule } from './education/education.module';
     SkillsModule,
     ProjectsModule,
     EducationModule,
+    WorkExperienceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
