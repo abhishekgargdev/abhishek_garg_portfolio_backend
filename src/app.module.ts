@@ -19,6 +19,7 @@ import { WorkExperienceModule } from './work-experience/work-experience.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { UserQueriesModule } from './user-queries/user-queries.module';
+import { DatabaseCheckModule } from './database-check/database-check.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { UserQueriesModule } from './user-queries/user-queries.module';
     QueueModule,
     // RedisModule ensures Upstash is checked on startup and daily
     RedisModule,
+    // DatabaseCheckModule ensures PostgreSQL is checked daily
+    DatabaseCheckModule,
     PrismaModule,
     AuthModule,
     MailModule,

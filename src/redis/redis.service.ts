@@ -23,6 +23,48 @@ export class RedisService implements OnModuleInit {
     await this.checkAndStore();
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async scheduledDailyRedisInsert() {
+    this.logger.log('Running scheduled Redis test data insertion...');
+    await this.insertTestData();
+  }
+
+  private async insertTestData() {
+    const url = this.configService.get<string>('UPSTASH_REDIS_REST_URL');
+    const token = this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN');
+
+    if (!url || !token) {
+      this.logger.warn('Upstash Redis REST URL or token not configured for test data insertion');
+      return;
+    }
+
+    const testKey = 'db_check:test:timestamp';
+    const testValue = new Date().toISOString();
+
+    try {
+      // Set a test key with the current timestamp
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(['SET', testKey, testValue]),
+      });
+
+      const text = await res.text();
+
+      if (!res.ok) {
+        this.logger.error(`Redis test data insertion failed: ${res.status} ${text}`);
+        return;
+      }
+
+      this.logger.log(`Redis test data inserted successfully: ${testKey} = ${testValue}`);
+    } catch (error: any) {
+      this.logger.error('Redis test data insertion error', error?.stack ?? error);
+    }
+  }
+
   private async checkAndStore() {
     const url = this.configService.get<string>('UPSTASH_REDIS_REST_URL');
     const token = this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN');
